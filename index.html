@@ -1,147 +1,1284 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Modern Viral Hub | 2026 Edition</title>
-    <style>
-        :root {
-            --primary: #6366f1;
-            --bg: #ffffff;
-            --text: #1f2937;
-            --accent: #f3f4f6;
-        }
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Diamond — Baseball, Elevated.</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;0,700;1,300;1,400&family=Syne:wght@400;600;700;800&family=Syne+Mono&display=swap" rel="stylesheet" />
+  <style>
+    /* ── Reset & Base ── */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; font-size: 16px; }
+    body {
+      background: #0a0a08;
+      color: #f0ebe0;
+      font-family: 'Syne', sans-serif;
+      overflow-x: hidden;
+      cursor: none;
+    }
+    a { text-decoration: none; color: inherit; }
+    img { display: block; width: 100%; }
 
-        body {
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-            margin: 0;
-            color: var(--text);
-            line-height: 1.6;
-            background: var(--bg);
-        }
+    /* ── CSS Variables ── */
+    :root {
+      --cream: #f0ebe0;
+      --red: #c8392b;
+      --green: #2a4a2e;
+      --gold: #d4a843;
+      --dark: #0a0a08;
+      --mid: #141410;
+      --border: rgba(240,235,224,0.12);
+    }
 
-        /* Clean Header */
-        header {
-            padding: 2rem 1rem;
-            text-align: center;
-            background: linear-gradient(135deg, #6366f1 0%, #a855f7 100%);
-            color: white;
-        }
+    /* ── Custom Cursor ── */
+    #cursor {
+      position: fixed; top: 0; left: 0;
+      width: 12px; height: 12px;
+      background: var(--cream);
+      border-radius: 50%;
+      pointer-events: none;
+      z-index: 9999;
+      transition: transform 0.15s ease, background 0.2s ease, width 0.3s ease, height 0.3s ease;
+      transform: translate(-50%, -50%);
+      mix-blend-mode: difference;
+    }
+    #cursor-ring {
+      position: fixed; top: 0; left: 0;
+      width: 38px; height: 38px;
+      border: 1px solid rgba(240,235,224,0.5);
+      border-radius: 50%;
+      pointer-events: none;
+      z-index: 9998;
+      transform: translate(-50%, -50%);
+      transition: transform 0.08s linear, width 0.3s ease, height 0.3s ease, border-color 0.3s ease;
+      mix-blend-mode: difference;
+    }
+    body:hover #cursor { opacity: 1; }
+    .cursor-hover #cursor { width: 20px; height: 20px; background: var(--red); }
+    .cursor-hover #cursor-ring { width: 60px; height: 60px; border-color: var(--red); }
 
-        .container {
-            max-width: 800px;
-            margin: 0 auto;
-            padding: 20px;
-        }
+    /* ── Preloader ── */
+    #preloader {
+      position: fixed; inset: 0;
+      background: var(--dark);
+      z-index: 9000;
+      display: flex; flex-direction: column;
+      align-items: center; justify-content: center;
+      transition: opacity 0.8s ease, visibility 0.8s ease;
+    }
+    #preloader.hidden { opacity: 0; visibility: hidden; }
+    .pre-logo {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: clamp(3rem, 8vw, 7rem);
+      font-weight: 300;
+      letter-spacing: 0.3em;
+      color: var(--cream);
+      opacity: 0;
+      animation: fadeUp 0.8s 0.3s forwards;
+    }
+    .pre-bar {
+      margin-top: 2rem;
+      width: 200px; height: 1px;
+      background: var(--border);
+      position: relative; overflow: hidden;
+    }
+    .pre-bar::after {
+      content: '';
+      position: absolute; inset: 0;
+      background: var(--cream);
+      transform: translateX(-100%);
+      animation: barFill 1.8s 0.5s cubic-bezier(0.77,0,0.18,1) forwards;
+    }
+    .pre-count {
+      margin-top: 1.2rem;
+      font-family: 'Syne Mono', monospace;
+      font-size: 0.75rem;
+      letter-spacing: 0.2em;
+      color: rgba(240,235,224,0.4);
+      opacity: 0;
+      animation: fadeUp 0.8s 0.5s forwards;
+    }
+    @keyframes barFill { to { transform: translateX(0); } }
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(20px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
 
-        /* The "Hook" Section */
-        .hero-card {
-            background: var(--accent);
-            padding: 2rem;
-            border-radius: 1.5rem;
-            margin-top: -3rem;
-            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
-            text-align: center;
-        }
+    /* ── Top Banner ── */
+    .top-banner {
+      position: fixed; top: 0; left: 0; right: 0;
+      z-index: 800;
+      padding: 0.8rem 2rem;
+      display: flex; align-items: center; justify-content: space-between;
+      border-bottom: 1px solid var(--border);
+      backdrop-filter: blur(12px);
+      background: rgba(10,10,8,0.6);
+      opacity: 0;
+      transform: translateY(-100%);
+      transition: opacity 0.6s, transform 0.6s;
+    }
+    .top-banner.visible { opacity: 1; transform: translateY(0); }
+    .banner-credit {
+      font-family: 'Syne Mono', monospace;
+      font-size: 0.65rem;
+      letter-spacing: 0.25em;
+      color: rgba(240,235,224,0.4);
+      text-transform: uppercase;
+    }
+    .banner-nav { display: flex; gap: 2.5rem; }
+    .banner-nav a {
+      font-family: 'Syne', sans-serif;
+      font-size: 0.75rem;
+      font-weight: 600;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: rgba(240,235,224,0.7);
+      position: relative;
+      transition: color 0.3s;
+    }
+    .banner-nav a::after {
+      content: '';
+      position: absolute; bottom: -2px; left: 0; width: 0; height: 1px;
+      background: var(--red);
+      transition: width 0.3s ease;
+    }
+    .banner-nav a:hover { color: var(--cream); }
+    .banner-nav a:hover::after { width: 100%; }
+    .nav-logo {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1.1rem;
+      font-weight: 600;
+      letter-spacing: 0.2em;
+    }
 
-        /* Ad Placeholder Styling */
-        .ad-slot {
-            background: #f9fafb;
-            border: 2px dashed #d1d5db;
-            margin: 2rem 0;
-            padding: 1rem;
-            text-align: center;
-            min-height: 250px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: #9ca3af;
-            font-size: 0.8rem;
-            text-transform: uppercase;
-        }
+    /* ── Hero ── */
+    #hero {
+      position: relative;
+      min-height: 100svh;
+      display: flex; flex-direction: column;
+      justify-content: flex-end;
+      padding: 0 clamp(1.5rem, 5vw, 5rem) clamp(3rem, 6vw, 5rem);
+      overflow: hidden;
+    }
+    .hero-bg {
+      position: absolute; inset: 0;
+      background:
+        radial-gradient(ellipse 80% 60% at 60% 40%, rgba(42,74,46,0.25) 0%, transparent 60%),
+        radial-gradient(ellipse 50% 80% at 85% 70%, rgba(200,57,43,0.12) 0%, transparent 50%),
+        linear-gradient(160deg, #0a0a08 0%, #0f110e 50%, #0a0a08 100%);
+    }
+    .hero-grid-lines {
+      position: absolute; inset: 0;
+      background-image:
+        linear-gradient(rgba(240,235,224,0.03) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(240,235,224,0.03) 1px, transparent 1px);
+      background-size: 80px 80px;
+    }
+    .hero-eyebrow {
+      position: relative;
+      font-family: 'Syne Mono', monospace;
+      font-size: 0.7rem;
+      letter-spacing: 0.3em;
+      color: var(--red);
+      text-transform: uppercase;
+      margin-bottom: 1.5rem;
+      opacity: 0; transform: translateY(30px);
+      transition: opacity 0.8s 2.4s ease, transform 0.8s 2.4s ease;
+    }
+    .hero-eyebrow.visible { opacity: 1; transform: translateY(0); }
+    .hero-title {
+      position: relative;
+      font-family: 'Cormorant Garamond', serif;
+      font-size: clamp(4.5rem, 13vw, 14rem);
+      font-weight: 300;
+      line-height: 0.88;
+      letter-spacing: -0.02em;
+    }
+    .hero-title span { display: block; overflow: hidden; }
+    .hero-title span em {
+      display: block;
+      font-style: italic;
+      color: var(--cream);
+      opacity: 0;
+      transform: translateY(110%);
+      transition: opacity 0.9s ease, transform 0.9s cubic-bezier(0.22, 1, 0.36, 1);
+    }
+    .hero-title span:nth-child(2) em { transition-delay: 0.1s; }
+    .hero-title span:nth-child(3) em { transition-delay: 0.2s; }
+    .hero-title span:nth-child(4) em { transition-delay: 0.3s; }
+    .hero-title.visible span em { opacity: 1; transform: translateY(0); }
+    .hero-sub {
+      position: relative;
+      display: flex; align-items: flex-end; justify-content: space-between;
+      margin-top: 3rem;
+      gap: 2rem;
+      flex-wrap: wrap;
+    }
+    .hero-desc {
+      max-width: 360px;
+      font-size: 0.95rem;
+      line-height: 1.7;
+      color: rgba(240,235,224,0.55);
+      opacity: 0; transform: translateY(20px);
+      transition: opacity 0.8s 2.8s ease, transform 0.8s 2.8s ease;
+    }
+    .hero-desc.visible { opacity: 1; transform: translateY(0); }
+    .hero-cta {
+      display: inline-flex; align-items: center; gap: 1rem;
+      font-family: 'Syne', sans-serif;
+      font-size: 0.75rem;
+      font-weight: 700;
+      letter-spacing: 0.22em;
+      text-transform: uppercase;
+      color: var(--cream);
+      border: 1px solid var(--border);
+      padding: 1.2rem 2.4rem;
+      position: relative; overflow: hidden;
+      transition: color 0.4s;
+      opacity: 0; transform: translateY(20px);
+      transition: opacity 0.8s 3s ease, transform 0.8s 3s ease, color 0.4s ease, border-color 0.4s ease;
+    }
+    .hero-cta.visible { opacity: 1; transform: translateY(0); }
+    .hero-cta::before {
+      content: '';
+      position: absolute; inset: 0;
+      background: var(--red);
+      transform: translateX(-101%);
+      transition: transform 0.5s cubic-bezier(0.77,0,0.18,1);
+    }
+    .hero-cta:hover::before { transform: translateX(0); }
+    .hero-cta:hover { border-color: var(--red); }
+    .hero-cta span { position: relative; z-index: 1; }
+    .hero-cta .arrow { font-size: 1rem; position: relative; z-index: 1; transition: transform 0.3s; }
+    .hero-cta:hover .arrow { transform: translate(4px, -4px); }
 
-        .cta-button {
-            background: var(--primary);
-            color: white;
-            padding: 1rem 2rem;
-            border: none;
-            border-radius: 99px;
-            font-size: 1.1rem;
-            font-weight: bold;
-            cursor: pointer;
-            transition: transform 0.2s;
-            text-decoration: none;
-            display: inline-block;
-        }
+    .hero-ball {
+      position: absolute;
+      top: 12%; right: 8%;
+      width: clamp(180px, 25vw, 380px);
+      height: clamp(180px, 25vw, 380px);
+      border-radius: 50%;
+      border: 1px solid rgba(240,235,224,0.06);
+      animation: rotateBall 30s linear infinite;
+      opacity: 0;
+      transition: opacity 1s 2.5s ease;
+    }
+    .hero-ball.visible { opacity: 1; }
+    .hero-ball::before, .hero-ball::after {
+      content: '';
+      position: absolute; inset: 0;
+      border-radius: 50%;
+      border: 1px solid rgba(240,235,224,0.04);
+    }
+    .hero-ball::before { transform: scale(1.12); }
+    .hero-ball::after { transform: scale(1.28); }
+    .ball-inner {
+      position: absolute; inset: 15%;
+      border-radius: 50%;
+      background: radial-gradient(circle at 40% 35%, rgba(240,235,224,0.08), transparent 60%);
+      border: 1px solid rgba(240,235,224,0.1);
+    }
+    .ball-seam {
+      position: absolute; inset: 15%;
+      border-radius: 50%;
+      overflow: hidden;
+    }
+    .ball-seam svg { width: 100%; height: 100%; opacity: 0.3; }
+    @keyframes rotateBall { to { transform: rotate(360deg); } }
 
-        .cta-button:hover {
-            transform: scale(1.05);
-        }
+    .scroll-hint {
+      position: absolute; bottom: 2.5rem; right: clamp(1.5rem, 5vw, 5rem);
+      display: flex; flex-direction: column; align-items: center; gap: 0.8rem;
+      opacity: 0; transition: opacity 0.8s 3.2s ease;
+    }
+    .scroll-hint.visible { opacity: 1; }
+    .scroll-hint span {
+      font-family: 'Syne Mono', monospace;
+      font-size: 0.6rem;
+      letter-spacing: 0.25em;
+      color: rgba(240,235,224,0.3);
+      writing-mode: vertical-rl;
+      text-transform: uppercase;
+    }
+    .scroll-line {
+      width: 1px; height: 60px;
+      background: var(--border);
+      position: relative; overflow: hidden;
+    }
+    .scroll-line::after {
+      content: '';
+      position: absolute; inset: 0;
+      background: var(--cream);
+      animation: scrollLine 2s ease infinite;
+    }
+    @keyframes scrollLine {
+      0%   { transform: translateY(-100%); }
+      50%  { transform: translateY(0); }
+      100% { transform: translateY(100%); }
+    }
 
-        /* Content Grid */
-        .grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 1.5rem;
-            margin-top: 2rem;
-        }
+    /* ── Marquee ── */
+    .marquee-wrap {
+      border-top: 1px solid var(--border);
+      border-bottom: 1px solid var(--border);
+      padding: 1.4rem 0;
+      overflow: hidden;
+      background: var(--mid);
+    }
+    .marquee-track {
+      display: flex; gap: 4rem;
+      animation: marquee 30s linear infinite;
+      width: max-content;
+    }
+    .marquee-track:hover { animation-play-state: paused; }
+    .marquee-item {
+      display: flex; align-items: center; gap: 1.5rem;
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1.5rem;
+      font-style: italic;
+      color: rgba(240,235,224,0.35);
+      white-space: nowrap;
+      flex-shrink: 0;
+    }
+    .marquee-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--red); flex-shrink: 0; }
+    @keyframes marquee { from { transform: translateX(0); } to { transform: translateX(-50%); } }
 
-        @media (max-width: 600px) {
-            .grid { grid-template-columns: 1fr; }
-        }
+    /* ── Section Base ── */
+    section { position: relative; }
+    .section-label {
+      font-family: 'Syne Mono', monospace;
+      font-size: 0.65rem;
+      letter-spacing: 0.3em;
+      text-transform: uppercase;
+      color: var(--red);
+      margin-bottom: 1.2rem;
+    }
+    .reveal {
+      opacity: 0; transform: translateY(50px);
+      transition: opacity 0.9s ease, transform 0.9s cubic-bezier(0.22, 1, 0.36, 1);
+    }
+    .reveal.visible { opacity: 1; transform: translateY(0); }
+    .reveal-delay-1 { transition-delay: 0.1s; }
+    .reveal-delay-2 { transition-delay: 0.2s; }
+    .reveal-delay-3 { transition-delay: 0.3s; }
+    .reveal-delay-4 { transition-delay: 0.4s; }
 
-        .card {
-            border: 1px solid #e5e7eb;
-            padding: 1.5rem;
-            border-radius: 1rem;
-            transition: 0.3s;
-        }
+    /* ── Featured Section ── */
+    #featured {
+      padding: clamp(5rem, 10vw, 10rem) clamp(1.5rem, 5vw, 5rem);
+    }
+    .featured-header {
+      display: flex; align-items: flex-end; justify-content: space-between;
+      margin-bottom: clamp(3rem, 6vw, 5rem);
+      flex-wrap: wrap; gap: 2rem;
+    }
+    .featured-title {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: clamp(2.8rem, 6vw, 5.5rem);
+      font-weight: 300;
+      line-height: 1.05;
+    }
+    .featured-title em { font-style: italic; color: rgba(240,235,224,0.4); }
+    .view-all {
+      display: inline-flex; align-items: center; gap: 0.8rem;
+      font-family: 'Syne', sans-serif;
+      font-size: 0.7rem;
+      font-weight: 700;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: rgba(240,235,224,0.5);
+      transition: color 0.3s;
+      padding-bottom: 0.3rem;
+      border-bottom: 1px solid var(--border);
+    }
+    .view-all:hover { color: var(--cream); border-color: var(--red); }
 
-        .card:hover { border-color: var(--primary); }
-    </style>
+    .cards-grid {
+      display: grid;
+      grid-template-columns: repeat(12, 1fr);
+      gap: 1.5rem;
+    }
+    .card {
+      position: relative;
+      overflow: hidden;
+      background: var(--mid);
+      border: 1px solid var(--border);
+      cursor: none;
+    }
+    .card:nth-child(1) { grid-column: span 7; }
+    .card:nth-child(2) { grid-column: span 5; }
+    .card:nth-child(3) { grid-column: span 4; }
+    .card:nth-child(4) { grid-column: span 4; }
+    .card:nth-child(5) { grid-column: span 4; }
+
+    .card-media {
+      aspect-ratio: 4/3;
+      background: var(--green);
+      position: relative; overflow: hidden;
+      transition: transform 0.8s cubic-bezier(0.22, 1, 0.36, 1);
+    }
+    .card:nth-child(1) .card-media { aspect-ratio: 16/9; }
+    .card:nth-child(2) .card-media { aspect-ratio: 3/4; }
+    .card:hover .card-media { transform: scale(1.04); }
+
+    .card-visual {
+      position: absolute; inset: 0;
+      display: flex; align-items: center; justify-content: center;
+    }
+    /* Baseball field SVG backgrounds per card */
+    .card-1-bg {
+      background: radial-gradient(ellipse 60% 70% at 50% 80%, #2a4a2e 0%, #1a2f1e 40%, #0f1f12 100%);
+    }
+    .card-2-bg { background: linear-gradient(135deg, #1a1208 0%, #2a1a08 50%, #1a0808 100%); }
+    .card-3-bg { background: linear-gradient(135deg, #080a1a 0%, #0a0f2a 100%); }
+    .card-4-bg { background: linear-gradient(135deg, #1a0808 0%, #2a1010 100%); }
+    .card-5-bg { background: linear-gradient(135deg, #0a1408 0%, #121e0e 100%); }
+
+    .field-graphic {
+      position: absolute; bottom: 0; left: 50%; transform: translateX(-50%);
+      width: 120%; opacity: 0.25;
+    }
+    .number-graphic {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: clamp(6rem, 15vw, 12rem);
+      font-weight: 700;
+      color: rgba(240,235,224,0.08);
+      line-height: 1;
+      user-select: none;
+    }
+    .icon-graphic {
+      font-size: 5rem;
+      opacity: 0.15;
+      line-height: 1;
+    }
+
+    .card-overlay {
+      position: absolute; inset: 0;
+      background: linear-gradient(to top, rgba(10,10,8,0.8) 0%, transparent 50%);
+      transition: opacity 0.4s;
+    }
+    .card-body {
+      padding: 1.4rem 1.6rem 1.6rem;
+    }
+    .card-tag {
+      font-family: 'Syne Mono', monospace;
+      font-size: 0.6rem;
+      letter-spacing: 0.25em;
+      text-transform: uppercase;
+      color: var(--red);
+      margin-bottom: 0.6rem;
+    }
+    .card-name {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: clamp(1.2rem, 2.5vw, 1.8rem);
+      font-weight: 400;
+      line-height: 1.2;
+      margin-bottom: 0.5rem;
+    }
+    .card-meta {
+      font-size: 0.75rem;
+      color: rgba(240,235,224,0.4);
+      display: flex; align-items: center; gap: 1rem;
+    }
+    .card-meta span::before { content: '—'; margin-right: 0.5rem; opacity: 0.4; }
+    .card-hover-line {
+      position: absolute; bottom: 0; left: 0; width: 0; height: 2px;
+      background: var(--red);
+      transition: width 0.5s cubic-bezier(0.77,0,0.18,1);
+    }
+    .card:hover .card-hover-line { width: 100%; }
+
+    /* ── Stats Banner ── */
+    #stats {
+      padding: clamp(4rem, 8vw, 8rem) clamp(1.5rem, 5vw, 5rem);
+      background: var(--mid);
+      border-top: 1px solid var(--border);
+      border-bottom: 1px solid var(--border);
+    }
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 0;
+    }
+    .stat-item {
+      padding: 2.5rem 2rem;
+      border-right: 1px solid var(--border);
+      position: relative;
+    }
+    .stat-item:last-child { border-right: none; }
+    .stat-number {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: clamp(3.5rem, 7vw, 6rem);
+      font-weight: 300;
+      line-height: 1;
+      color: var(--cream);
+      counter-reset: stat;
+    }
+    .stat-number .sup {
+      font-size: 0.4em;
+      vertical-align: super;
+      color: var(--red);
+      font-family: 'Syne', sans-serif;
+      font-weight: 700;
+    }
+    .stat-label {
+      margin-top: 0.8rem;
+      font-size: 0.72rem;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: rgba(240,235,224,0.35);
+      font-family: 'Syne', sans-serif;
+    }
+    .stat-item::after {
+      content: '';
+      position: absolute; bottom: 0; left: 0; right: 0;
+      height: 0;
+      background: var(--red);
+      transition: height 0.4s ease;
+      pointer-events: none;
+    }
+    .stat-item:hover::after { height: 2px; }
+
+    /* ── Moments Section ── */
+    #moments {
+      padding: clamp(5rem, 10vw, 10rem) clamp(1.5rem, 5vw, 5rem);
+    }
+    .moments-inner {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: clamp(3rem, 6vw, 6rem);
+      align-items: center;
+    }
+    .moments-text { }
+    .moments-heading {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: clamp(2.5rem, 5.5vw, 5rem);
+      font-weight: 300;
+      line-height: 1.1;
+      margin-bottom: 2rem;
+    }
+    .moments-heading em { font-style: italic; color: rgba(240,235,224,0.45); }
+    .moments-body {
+      font-size: 0.92rem;
+      line-height: 1.8;
+      color: rgba(240,235,224,0.5);
+      margin-bottom: 2.5rem;
+      max-width: 420px;
+    }
+    .moments-visual {
+      position: relative;
+    }
+    .big-quote {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: clamp(1.2rem, 2.8vw, 2rem);
+      font-style: italic;
+      line-height: 1.4;
+      color: rgba(240,235,224,0.7);
+      padding: 2.5rem;
+      border-left: 2px solid var(--red);
+      background: var(--mid);
+      position: relative;
+    }
+    .big-quote::before {
+      content: '"';
+      font-size: 8rem;
+      font-family: 'Cormorant Garamond', serif;
+      color: var(--red);
+      opacity: 0.15;
+      position: absolute;
+      top: -1rem; left: 1rem;
+      line-height: 1;
+    }
+    .quote-attr {
+      display: block;
+      margin-top: 1.5rem;
+      font-family: 'Syne Mono', monospace;
+      font-size: 0.65rem;
+      letter-spacing: 0.2em;
+      color: rgba(240,235,224,0.35);
+      text-transform: uppercase;
+    }
+
+    /* ── Schedule ── */
+    #schedule {
+      padding: clamp(5rem, 10vw, 10rem) clamp(1.5rem, 5vw, 5rem);
+      background: var(--mid);
+      border-top: 1px solid var(--border);
+    }
+    .schedule-header {
+      display: flex; justify-content: space-between; align-items: flex-end;
+      margin-bottom: 3rem; flex-wrap: wrap; gap: 1.5rem;
+    }
+    .schedule-title {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: clamp(2.5rem, 5vw, 4.5rem);
+      font-weight: 300;
+    }
+    .game-row {
+      display: grid;
+      grid-template-columns: 80px 1fr auto auto;
+      align-items: center;
+      gap: 2rem;
+      padding: 1.8rem 0;
+      border-bottom: 1px solid var(--border);
+      transition: background 0.3s ease;
+      cursor: none;
+      position: relative;
+    }
+    .game-row::before {
+      content: '';
+      position: absolute; inset: 0 -2rem;
+      background: rgba(240,235,224,0.02);
+      opacity: 0;
+      transition: opacity 0.3s;
+    }
+    .game-row:hover::before { opacity: 1; }
+    .game-row:hover .game-home { color: var(--cream); }
+    .game-date {
+      font-family: 'Syne Mono', monospace;
+      font-size: 0.7rem;
+      letter-spacing: 0.15em;
+      color: rgba(240,235,224,0.35);
+      line-height: 1.5;
+    }
+    .game-matchup {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1.4rem;
+      font-weight: 400;
+    }
+    .game-home { color: rgba(240,235,224,0.5); transition: color 0.3s; }
+    .game-vs { color: rgba(240,235,224,0.2); margin: 0 0.8rem; font-style: italic; }
+    .game-venue {
+      font-size: 0.72rem;
+      letter-spacing: 0.1em;
+      color: rgba(240,235,224,0.3);
+      text-align: right;
+    }
+    .game-badge {
+      display: inline-block;
+      font-family: 'Syne', sans-serif;
+      font-size: 0.58rem;
+      font-weight: 700;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      padding: 0.4rem 0.9rem;
+      border: 1px solid;
+    }
+    .badge-home { color: var(--red); border-color: rgba(200,57,43,0.4); }
+    .badge-away { color: rgba(240,235,224,0.4); border-color: var(--border); }
+    .badge-live { color: var(--gold); border-color: rgba(212,168,67,0.4); animation: pulse 2s infinite; }
+    @keyframes pulse { 0%,100% { opacity: 1; } 50% { opacity: 0.5; } }
+
+    /* ── Newsletter ── */
+    #newsletter {
+      padding: clamp(5rem, 10vw, 10rem) clamp(1.5rem, 5vw, 5rem);
+      text-align: center;
+      overflow: hidden;
+    }
+    .nl-title {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: clamp(3rem, 8vw, 7rem);
+      font-weight: 300;
+      line-height: 0.95;
+      margin-bottom: 1.5rem;
+    }
+    .nl-title em { font-style: italic; color: rgba(240,235,224,0.35); }
+    .nl-sub {
+      font-size: 0.9rem;
+      color: rgba(240,235,224,0.45);
+      max-width: 420px;
+      margin: 0 auto 3rem;
+      line-height: 1.7;
+    }
+    .nl-form {
+      display: flex;
+      max-width: 480px;
+      margin: 0 auto;
+      border: 1px solid var(--border);
+    }
+    .nl-input {
+      flex: 1;
+      background: transparent;
+      border: none;
+      outline: none;
+      padding: 1.2rem 1.5rem;
+      font-family: 'Syne', sans-serif;
+      font-size: 0.85rem;
+      color: var(--cream);
+      letter-spacing: 0.05em;
+    }
+    .nl-input::placeholder { color: rgba(240,235,224,0.25); }
+    .nl-btn {
+      background: var(--cream);
+      color: var(--dark);
+      border: none;
+      padding: 1.2rem 2rem;
+      font-family: 'Syne', sans-serif;
+      font-size: 0.7rem;
+      font-weight: 700;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      cursor: none;
+      transition: background 0.3s, color 0.3s;
+    }
+    .nl-btn:hover { background: var(--red); color: var(--cream); }
+
+    /* ── Footer ── */
+    footer {
+      background: #050504;
+      border-top: 1px solid var(--border);
+      padding: clamp(3rem, 6vw, 5rem) clamp(1.5rem, 5vw, 5rem) 2rem;
+    }
+    .footer-top {
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr;
+      gap: 3rem;
+      padding-bottom: 3rem;
+      border-bottom: 1px solid var(--border);
+      margin-bottom: 2rem;
+    }
+    .footer-brand {}
+    .footer-logo {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 2.2rem;
+      font-weight: 300;
+      letter-spacing: 0.15em;
+      margin-bottom: 1rem;
+    }
+    .footer-tagline {
+      font-size: 0.8rem;
+      color: rgba(240,235,224,0.35);
+      line-height: 1.7;
+      max-width: 240px;
+    }
+    .footer-col-title {
+      font-family: 'Syne', sans-serif;
+      font-size: 0.65rem;
+      font-weight: 700;
+      letter-spacing: 0.25em;
+      text-transform: uppercase;
+      color: rgba(240,235,224,0.3);
+      margin-bottom: 1.5rem;
+    }
+    .footer-links { list-style: none; display: flex; flex-direction: column; gap: 0.8rem; }
+    .footer-links li a {
+      font-size: 0.9rem;
+      color: rgba(240,235,224,0.5);
+      transition: color 0.3s;
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1.05rem;
+    }
+    .footer-links li a:hover { color: var(--cream); }
+    .footer-bottom {
+      display: flex; align-items: center; justify-content: space-between;
+      flex-wrap: wrap; gap: 1rem;
+    }
+    .footer-credit {
+      font-family: 'Syne Mono', monospace;
+      font-size: 0.65rem;
+      letter-spacing: 0.2em;
+      color: rgba(240,235,224,0.25);
+      text-transform: uppercase;
+    }
+    .footer-credit strong { color: rgba(240,235,224,0.5); }
+    .footer-copy {
+      font-family: 'Syne Mono', monospace;
+      font-size: 0.62rem;
+      color: rgba(240,235,224,0.2);
+      letter-spacing: 0.15em;
+    }
+
+    /* ── Responsive ── */
+    @media (max-width: 900px) {
+      .cards-grid { grid-template-columns: 1fr; }
+      .card:nth-child(n) { grid-column: span 1; }
+      .moments-inner { grid-template-columns: 1fr; }
+      .footer-top { grid-template-columns: 1fr; gap: 2.5rem; }
+      .game-row { grid-template-columns: 60px 1fr auto; }
+      .game-venue { display: none; }
+      .banner-nav { display: none; }
+    }
+    @media (max-width: 600px) {
+      .hero-sub { flex-direction: column; align-items: flex-start; }
+      .stats-grid { grid-template-columns: 1fr 1fr; }
+      .stat-item { border-right: none; border-bottom: 1px solid var(--border); }
+      .nl-form { flex-direction: column; }
+      .nl-btn { width: 100%; }
+    }
+
+    /* ── Horizontal Rule ── */
+    .hr { border: none; border-top: 1px solid var(--border); }
+
+    /* ── Noise overlay ── */
+    body::before {
+      content: '';
+      position: fixed; inset: 0;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E");
+      opacity: 0.025;
+      pointer-events: none;
+      z-index: 7000;
+    }
+
+    /* ── Count Up ── */
+    .count-anim { transition: color 0.5s; }
+  </style>
 </head>
 <body>
 
-<header>
-    <h1>The Daily Insight</h1>
-    <p>Exclusive tips you won't find on Google.</p>
-</header>
+  <!-- Cursor -->
+  <div id="cursor"></div>
+  <div id="cursor-ring"></div>
 
-<div class="container">
-    <div class="hero-card">
-        <h2>Free 2026 Productivity Template</h2>
-        <p>Stop wasting time. Use our one-click generator to organize your week.</p>
-        <button class="cta-button" onclick="alert('Tool Logic Goes Here!')">Generate My Plan</button>
+  <!-- Preloader -->
+  <div id="preloader">
+    <div class="pre-logo">DIAMOND</div>
+    <div class="pre-bar"></div>
+    <div class="pre-count" id="pre-count">000</div>
+  </div>
+
+  <!-- Top Banner (fixed nav) -->
+  <header class="top-banner" id="top-banner">
+    <div class="banner-credit">Made by <strong>Rishi Prabhu</strong></div>
+    <div class="nav-logo">DIAMOND</div>
+    <nav class="banner-nav">
+      <a href="#featured">Legends</a>
+      <a href="#stats">Stats</a>
+      <a href="#schedule">Schedule</a>
+      <a href="#newsletter">Follow</a>
+    </nav>
+  </header>
+
+  <!-- Hero -->
+  <section id="hero">
+    <div class="hero-bg"></div>
+    <div class="hero-grid-lines"></div>
+
+    <!-- Decorative ball -->
+    <div class="hero-ball" id="hero-ball">
+      <div class="ball-inner"></div>
+      <div class="ball-seam">
+        <svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
+          <path d="M30,100 C30,50 80,20 100,20 C120,20 170,50 170,100 C170,150 120,180 100,180 C80,180 30,150 30,100Z" fill="none" stroke="rgba(240,235,224,0.6)" stroke-width="1.5"/>
+          <path d="M15,80 C25,60 45,45 70,40" fill="none" stroke="rgba(200,57,43,0.7)" stroke-width="1.5" stroke-linecap="round"/>
+          <path d="M185,80 C175,60 155,45 130,40" fill="none" stroke="rgba(200,57,43,0.7)" stroke-width="1.5" stroke-linecap="round"/>
+          <path d="M15,120 C25,140 45,155 70,160" fill="none" stroke="rgba(200,57,43,0.7)" stroke-width="1.5" stroke-linecap="round"/>
+          <path d="M185,120 C175,140 155,155 130,160" fill="none" stroke="rgba(200,57,43,0.7)" stroke-width="1.5" stroke-linecap="round"/>
+        </svg>
+      </div>
     </div>
 
-    <div class="ad-slot">
-        <div>
-            <p>Your Ad Code Here (e.g., Google AdSense)</p>
-            <small>Advertisement</small>
-        </div>
+    <div class="hero-eyebrow" id="hero-eyebrow">⬤ Season 2025 — The Diamond Awaits</div>
+    <h1 class="hero-title" id="hero-title">
+      <span><em>Where</em></span>
+      <span><em>Legends</em></span>
+      <span><em>Are</em></span>
+      <span><em>Forged.</em></span>
+    </h1>
+    <div class="hero-sub">
+      <p class="hero-desc" id="hero-desc">
+        Baseball isn't just a game — it's an American mythology. 
+        Where dust and chalk meet diamond, where each swing 
+        carries the weight of a thousand summers.
+      </p>
+      <a href="#featured" class="hero-cta" id="hero-cta">
+        <span>Explore the Diamond</span>
+        <span class="arrow">↗</span>
+      </a>
     </div>
 
-    <div class="grid">
-        <div class="card">
-            <h3>How to Scale Faster</h3>
-            <p>Short, punchy advice that keeps people reading to the bottom...</p>
-        </div>
-        <div class="card">
-            <h3>The 2026 Tech Stack</h3>
-            <p>Why simpler is better for modern web performance.</p>
-        </div>
+    <div class="scroll-hint" id="scroll-hint">
+      <span>Scroll</span>
+      <div class="scroll-line"></div>
+    </div>
+  </section>
+
+  <!-- Marquee -->
+  <div class="marquee-wrap">
+    <div class="marquee-track">
+      <div class="marquee-item"><div class="marquee-dot"></div>World Series Champions</div>
+      <div class="marquee-item"><div class="marquee-dot"></div>Hall of Fame Legends</div>
+      <div class="marquee-item"><div class="marquee-dot"></div>Perfect Games</div>
+      <div class="marquee-item"><div class="marquee-dot"></div>Grand Slams</div>
+      <div class="marquee-item"><div class="marquee-dot"></div>No-Hitters</div>
+      <div class="marquee-item"><div class="marquee-dot"></div>Triple Crowns</div>
+      <div class="marquee-item"><div class="marquee-dot"></div>Stolen Bases</div>
+      <div class="marquee-item"><div class="marquee-dot"></div>Cy Young Awards</div>
+      <div class="marquee-item"><div class="marquee-dot"></div>Walk-Off Hits</div>
+      <div class="marquee-item"><div class="marquee-dot"></div>World Series Champions</div>
+      <div class="marquee-item"><div class="marquee-dot"></div>Hall of Fame Legends</div>
+      <div class="marquee-item"><div class="marquee-dot"></div>Perfect Games</div>
+      <div class="marquee-item"><div class="marquee-dot"></div>Grand Slams</div>
+      <div class="marquee-item"><div class="marquee-dot"></div>No-Hitters</div>
+      <div class="marquee-item"><div class="marquee-dot"></div>Triple Crowns</div>
+      <div class="marquee-item"><div class="marquee-dot"></div>Stolen Bases</div>
+      <div class="marquee-item"><div class="marquee-dot"></div>Cy Young Awards</div>
+      <div class="marquee-item"><div class="marquee-dot"></div>Walk-Off Hits</div>
+    </div>
+  </div>
+
+  <!-- Featured Legends -->
+  <section id="featured">
+    <div class="featured-header">
+      <div>
+        <div class="section-label reveal">01 — Selected Legends</div>
+        <h2 class="featured-title reveal reveal-delay-1">
+          Icons of<br><em>the Diamond</em>
+        </h2>
+      </div>
+      <a href="#" class="view-all reveal reveal-delay-2">View all legends ↗</a>
     </div>
 
-    <div class="ad-slot">
-        <div>
-            <p>Related Sponsored Links</p>
+    <div class="cards-grid">
+      <div class="card reveal">
+        <div class="card-media card-1-bg">
+          <div class="card-visual">
+            <!-- Baseball diamond SVG -->
+            <svg viewBox="0 0 400 300" style="width:70%;opacity:0.2" xmlns="http://www.w3.org/2000/svg">
+              <polygon points="200,30 350,150 200,270 50,150" fill="none" stroke="#f0ebe0" stroke-width="2"/>
+              <circle cx="200" cy="150" r="8" fill="#c8392b"/>
+              <circle cx="200" cy="30" r="6" fill="#f0ebe0" opacity="0.6"/>
+              <circle cx="350" cy="150" r="6" fill="#f0ebe0" opacity="0.6"/>
+              <circle cx="200" cy="270" r="6" fill="#f0ebe0" opacity="0.6"/>
+              <circle cx="50" cy="150" r="6" fill="#f0ebe0" opacity="0.6"/>
+              <line x1="200" y1="270" x2="200" y2="310" stroke="#f0ebe0" stroke-width="1" opacity="0.3"/>
+              <ellipse cx="200" cy="260" rx="60" ry="15" fill="none" stroke="#f0ebe0" stroke-width="1" opacity="0.2"/>
+            </svg>
+          </div>
+          <div class="card-overlay"></div>
         </div>
+        <div class="card-body">
+          <div class="card-tag">Outfield — Hall of Fame</div>
+          <div class="card-name">Babe Ruth<br>— The Sultan of Swat</div>
+          <div class="card-meta">
+            <span>714 Home Runs</span>
+            <span>Yankees, 1920–1934</span>
+          </div>
+        </div>
+        <div class="card-hover-line"></div>
+      </div>
+
+      <div class="card reveal reveal-delay-1">
+        <div class="card-media card-2-bg">
+          <div class="card-visual">
+            <div class="number-graphic">42</div>
+          </div>
+          <div class="card-overlay"></div>
+        </div>
+        <div class="card-body">
+          <div class="card-tag">Second Base — Pioneer</div>
+          <div class="card-name">Jackie Robinson<br>— Breaking Barriers</div>
+          <div class="card-meta">
+            <span>Retired League-Wide</span>
+            <span>Dodgers, 1947–1956</span>
+          </div>
+        </div>
+        <div class="card-hover-line"></div>
+      </div>
+
+      <div class="card reveal reveal-delay-1">
+        <div class="card-media card-3-bg">
+          <div class="card-visual">
+            <div class="number-graphic">24</div>
+          </div>
+          <div class="card-overlay"></div>
+        </div>
+        <div class="card-body">
+          <div class="card-tag">Center Field — Say Hey</div>
+          <div class="card-name">Willie Mays</div>
+          <div class="card-meta"><span>660 HR</span><span>Giants</span></div>
+        </div>
+        <div class="card-hover-line"></div>
+      </div>
+
+      <div class="card reveal reveal-delay-2">
+        <div class="card-media card-4-bg">
+          <div class="card-visual">
+            <div class="icon-graphic">⚾</div>
+          </div>
+          <div class="card-overlay"></div>
+        </div>
+        <div class="card-body">
+          <div class="card-tag">Pitcher — Perfect</div>
+          <div class="card-name">Sandy Koufax</div>
+          <div class="card-meta"><span>4 No-Hitters</span><span>Dodgers</span></div>
+        </div>
+        <div class="card-hover-line"></div>
+      </div>
+
+      <div class="card reveal reveal-delay-3">
+        <div class="card-media card-5-bg">
+          <div class="card-visual">
+            <div class="number-graphic">4</div>
+          </div>
+          <div class="card-overlay"></div>
+        </div>
+        <div class="card-body">
+          <div class="card-tag">Shortstop — Captain</div>
+          <div class="card-name">Lou Gehrig</div>
+          <div class="card-meta"><span>2,130 Games</span><span>Yankees</span></div>
+        </div>
+        <div class="card-hover-line"></div>
+      </div>
     </div>
-</div>
+  </section>
 
-<footer style="text-align: center; padding: 2rem; color: #6b7280; font-size: 0.8rem;">
-    &copy; 2026 Your Brand. Built for speed.
-</footer>
+  <!-- Stats -->
+  <section id="stats">
+    <div class="stats-grid">
+      <div class="stat-item reveal">
+        <div class="stat-number count-anim" data-target="162">000<span class="sup">+</span></div>
+        <div class="stat-label">Regular Season Games</div>
+      </div>
+      <div class="stat-item reveal reveal-delay-1">
+        <div class="stat-number count-anim" data-target="30">00<span class="sup">×</span></div>
+        <div class="stat-label">Major League Teams</div>
+      </div>
+      <div class="stat-item reveal reveal-delay-2">
+        <div class="stat-number count-anim" data-target="119">000<span class="sup">+</span></div>
+        <div class="stat-label">Years of History</div>
+      </div>
+      <div class="stat-item reveal reveal-delay-3">
+        <div class="stat-number count-anim" data-target="73">000<span class="sup">K</span></div>
+        <div class="stat-label">Avg. Stadium Capacity</div>
+      </div>
+    </div>
+  </section>
 
+  <!-- Moments -->
+  <section id="moments">
+    <div class="moments-inner">
+      <div class="moments-text">
+        <div class="section-label reveal">02 — The Poetry of the Game</div>
+        <h2 class="moments-heading reveal reveal-delay-1">
+          Ninety feet<br>between<br><em>every base.</em>
+        </h2>
+        <p class="moments-body reveal reveal-delay-2">
+          Baseball exists in the tension between stillness and explosion. 
+          A pitcher winds up, the crowd holds its breath. Three strikes and 
+          you're out. Four balls and you walk. The rules are ancient, 
+          the drama is eternal. No clock governs baseball — only outs.
+        </p>
+        <a href="#schedule" class="hero-cta reveal reveal-delay-3" style="display:inline-flex">
+          <span>See the Schedule</span>
+          <span class="arrow">↗</span>
+        </a>
+      </div>
+      <div class="moments-visual reveal reveal-delay-2">
+        <div class="big-quote">
+          Baseball is the only field of endeavor where a man can succeed 
+          three times out of ten and be considered a good performer.
+          <span class="quote-attr">— Ted Williams, .406 batting average (1941)</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Schedule -->
+  <section id="schedule">
+    <div class="schedule-header">
+      <div>
+        <div class="section-label reveal">03 — Upcoming Games</div>
+        <h2 class="schedule-title reveal reveal-delay-1">This Week<br><em style="font-style:italic;color:rgba(240,235,224,0.35)">on the Diamond</em></h2>
+      </div>
+      <a href="#" class="view-all reveal reveal-delay-2">Full schedule ↗</a>
+    </div>
+
+    <div class="game-row reveal">
+      <div class="game-date">APR<br>24</div>
+      <div class="game-matchup">
+        <span class="game-home">New York Yankees</span>
+        <span class="game-vs">vs</span>
+        Boston Red Sox
+      </div>
+      <div class="game-venue">Yankee Stadium<br>7:05 PM ET</div>
+      <div class="game-badge badge-home">Home</div>
+    </div>
+    <div class="game-row reveal reveal-delay-1">
+      <div class="game-date">APR<br>25</div>
+      <div class="game-matchup">
+        <span class="game-home">Los Angeles Dodgers</span>
+        <span class="game-vs">vs</span>
+        San Francisco Giants
+      </div>
+      <div class="game-venue">Dodger Stadium<br>8:10 PM PT</div>
+      <div class="game-badge badge-live">Live ●</div>
+    </div>
+    <div class="game-row reveal reveal-delay-2">
+      <div class="game-date">APR<br>26</div>
+      <div class="game-matchup">
+        <span class="game-home">Chicago Cubs</span>
+        <span class="game-vs">vs</span>
+        St. Louis Cardinals
+      </div>
+      <div class="game-venue">Wrigley Field<br>1:20 PM CT</div>
+      <div class="game-badge badge-home">Home</div>
+    </div>
+    <div class="game-row reveal reveal-delay-3">
+      <div class="game-date">APR<br>27</div>
+      <div class="game-matchup">
+        <span class="game-home">Houston Astros</span>
+        <span class="game-vs">@</span>
+        Texas Rangers
+      </div>
+      <div class="game-venue">Globe Life Field<br>3:05 PM CT</div>
+      <div class="game-badge badge-away">Away</div>
+    </div>
+    <div class="game-row reveal">
+      <div class="game-date">APR<br>28</div>
+      <div class="game-matchup">
+        <span class="game-home">Atlanta Braves</span>
+        <span class="game-vs">vs</span>
+        New York Mets
+      </div>
+      <div class="game-venue">Truist Park<br>7:20 PM ET</div>
+      <div class="game-badge badge-home">Home</div>
+    </div>
+  </section>
+
+  <!-- Newsletter -->
+  <section id="newsletter">
+    <div class="section-label reveal" style="text-align:center">04 — Stay in the Game</div>
+    <h2 class="nl-title reveal reveal-delay-1">
+      Never miss<br><em>a swing.</em>
+    </h2>
+    <p class="nl-sub reveal reveal-delay-2">
+      Get scores, stories, and the lore of baseball delivered 
+      directly to your inbox every morning of the season.
+    </p>
+    <div class="nl-form reveal reveal-delay-3">
+      <input class="nl-input" type="email" placeholder="Your email address" />
+      <button class="nl-btn">Subscribe</button>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer>
+    <div class="footer-top">
+      <div class="footer-brand">
+        <div class="footer-logo">DIAMOND</div>
+        <p class="footer-tagline">A celebration of baseball — the greatest game ever played. From dusty sandlots to October nights.</p>
+      </div>
+      <div>
+        <div class="footer-col-title">Navigate</div>
+        <ul class="footer-links">
+          <li><a href="#featured">Legends</a></li>
+          <li><a href="#stats">Statistics</a></li>
+          <li><a href="#schedule">Schedule</a></li>
+          <li><a href="#moments">Stories</a></li>
+        </ul>
+      </div>
+      <div>
+        <div class="footer-col-title">Follow</div>
+        <ul class="footer-links">
+          <li><a href="#">Instagram</a></li>
+          <li><a href="#">Twitter / X</a></li>
+          <li><a href="#">YouTube</a></li>
+          <li><a href="#">Newsletter</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <div class="footer-credit">Made by <strong>Rishi Prabhu</strong></div>
+      <div class="footer-copy">© 2025 Diamond — Baseball, Elevated.</div>
+    </div>
+  </footer>
+
+  <script>
+    // ── Cursor ──────────────────────────────────────────────────────────
+    const cursor = document.getElementById('cursor');
+    const cursorRing = document.getElementById('cursor-ring');
+    let mx = 0, my = 0, rx = 0, ry = 0;
+    document.addEventListener('mousemove', e => { mx = e.clientX; my = e.clientY; });
+    function animCursor() {
+      rx += (mx - rx) * 0.12;
+      ry += (my - ry) * 0.12;
+      cursor.style.left = mx + 'px';
+      cursor.style.top = my + 'px';
+      cursorRing.style.left = rx + 'px';
+      cursorRing.style.top = ry + 'px';
+      requestAnimationFrame(animCursor);
+    }
+    animCursor();
+    document.querySelectorAll('a, button, .card, .game-row').forEach(el => {
+      el.addEventListener('mouseenter', () => document.body.classList.add('cursor-hover'));
+      el.addEventListener('mouseleave', () => document.body.classList.remove('cursor-hover'));
+    });
+
+    // ── Preloader ───────────────────────────────────────────────────────
+    const preCountEl = document.getElementById('pre-count');
+    let count = 0;
+    const countInterval = setInterval(() => {
+      count = Math.min(count + Math.floor(Math.random() * 8 + 2), 100);
+      preCountEl.textContent = String(count).padStart(3, '0');
+      if (count >= 100) {
+        clearInterval(countInterval);
+        setTimeout(() => {
+          document.getElementById('preloader').classList.add('hidden');
+          document.getElementById('top-banner').classList.add('visible');
+          // Trigger hero animations
+          document.getElementById('hero-eyebrow').classList.add('visible');
+          document.getElementById('hero-title').classList.add('visible');
+          document.getElementById('hero-desc').classList.add('visible');
+          document.getElementById('hero-cta').classList.add('visible');
+          document.getElementById('hero-ball').classList.add('visible');
+          document.getElementById('scroll-hint').classList.add('visible');
+        }, 600);
+      }
+    }, 28);
+
+    // ── Scroll Reveal ───────────────────────────────────────────────────
+    const reveals = document.querySelectorAll('.reveal');
+    const io = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('visible');
+          io.unobserve(entry.target);
+        }
+      });
+    }, { threshold: 0.1, rootMargin: '0px 0px -60px 0px' });
+    reveals.forEach(el => io.observe(el));
+
+    // ── Count-up ─────────────────────────────────────────────────────────
+    const countEls = document.querySelectorAll('.count-anim');
+    const countIo = new IntersectionObserver(entries => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          const el = entry.target;
+          const target = parseInt(el.dataset.target);
+          const sup = el.querySelector('.sup');
+          const supText = sup ? sup.outerHTML : '';
+          let start = 0;
+          const step = target / 60;
+          const interval = setInterval(() => {
+            start = Math.min(start + step, target);
+            el.innerHTML = Math.floor(start) + supText;
+            if (start >= target) clearInterval(interval);
+          }, 25);
+          countIo.unobserve(el);
+        }
+      });
+    }, { threshold: 0.5 });
+    countEls.forEach(el => countIo.observe(el));
+
+    // ── Parallax Hero Ball ──────────────────────────────────────────────
+    const heroBall = document.getElementById('hero-ball');
+    window.addEventListener('scroll', () => {
+      const y = window.scrollY;
+      if (heroBall) heroBall.style.transform = `translateY(${y * 0.3}px)`;
+    });
+
+    // ── Subscribe button ────────────────────────────────────────────────
+    document.querySelector('.nl-btn').addEventListener('click', function() {
+      const input = document.querySelector('.nl-input');
+      if (input.value) {
+        this.textContent = 'You\'re in ✓';
+        this.style.background = '#2a4a2e';
+        this.style.color = '#f0ebe0';
+        input.value = '';
+      }
+    });
+  </script>
 </body>
 </html>
